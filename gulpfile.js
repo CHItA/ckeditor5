@@ -10,6 +10,12 @@ const config = {
 	BUNDLE_DIR: 'bundle',
 	WORKSPACE_DIR: '..',
 
+	// Directory where documentation files will be collect.
+	DOCUMENTATION_SOURCE_DIR: '.docs',
+
+	// Directory where prepared (built) documentation will be located.
+	DOCUMENTATION_DIR: 'build/docs',
+
 	// Files ignored by jshint and jscs tasks. Files from .gitignore will be added automatically during tasks execution.
 	IGNORED_FILES: [
 		'src/lib/**'
