@@ -8,6 +8,6 @@
 	"nonbsp": true,
 	"undef": true,
 	"unused": true,
-	"strict": "global",
+	"strict": "implied",
 	"varstmt": true
 }

@@ -1,7 +1,5 @@
 /* jshint browser: false, node: true */
 
-'use strict';
-
 const config = {
 	plugins: [
 		'benderjs-chai',
