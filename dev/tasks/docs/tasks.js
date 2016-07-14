@@ -8,6 +8,7 @@
 const gulp = require( 'gulp' );
 const jsdoc = require( 'gulp-jsdoc3' );
 const path = require( 'path' );
+const collectFiles = require( './tasks/collect-files' );
 
 module.exports = ( config ) => {
 	const tasks = {
@@ -38,8 +39,18 @@ module.exports = ( config ) => {
 				.pipe( jsdoc( jsDocConfig, cb ) );
 		},
 
+		collectGuideFiles() {
+			return collectFiles( config, 'guides', [ 'md' ] );
+		},
+
+		collectSampleFiles() {
+			return collectFiles( config, 'samples', [ 'md', 'html', 'js' ] );
+		},
+
 		register() {
 			gulp.task( 'docs', [ 'build:js:esnext' ], tasks.buildDocs );
+			gulp.task( 'docs:prepare:guides', tasks.collectGuideFiles );
+			gulp.task( 'docs:prepare:samples', tasks.collectSampleFiles );
 		}
 	};
 
