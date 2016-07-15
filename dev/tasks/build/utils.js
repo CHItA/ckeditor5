@@ -331,26 +331,28 @@ require( [ 'tests' ], bender.defer(), function( err ) {
 	/**
 	 * Processes paths of sample files inside CKEditor5 dependencies.
 	 *
-	 * * `samples/ui/foo.js` -> `tests/ui/manual/samples/foo.js`
+	 * * `ckeditor5-package/docs/samples/foo.js` -> `tests/package/manual/samples/foo.js`
+	 * * `ckeditor5-package/docs/samples/aa/bb/cc/foo.js` -> `tests/package/manual/samples/aa/bb/cc/foo.js`
 	 *
 	 * @returns {Stream}
 	 */
 	renameSampleFiles() {
 		return rename( ( file ) => {
 			const dirFrags = file.dirname.split( path.sep );
-			const firstFrag = dirFrags[ 0 ];
+			const packageName = dirFrags[ 0 ].replace( /ckeditor5-/, '' );
 
-			if ( firstFrag == 'samples' ) {
-				// Replace 'samples/' with 'tests/'.
-				// Insert 'manual/samples/' after directory name.
-				// samples/ui/foo.js -> tests/ui/manual/samples/foo.js
-				dirFrags.splice( 0, 1, 'tests' );
-				dirFrags.push( 'manual', 'samples' );
-			} else {
-				throw new Error( 'Path should start with "samples".' );
+			if ( !dirFrags[ 0 ].match( /^ckeditor5-/ ) ) {
+				throw new Error( 'Path should start with directory with prefix "ckeditor5-".' );
 			}
 
-			file.dirname = path.join.apply( null, dirFrags );
+			const newDirFrags = [
+				'tests',
+				packageName,
+				'manual',
+				'samples'
+			];
+
+			file.dirname = path.join.apply( null, newDirFrags.concat( dirFrags.slice( 3 ) ) );
 		} );
 	},
 

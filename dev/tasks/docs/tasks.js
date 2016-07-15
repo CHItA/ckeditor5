@@ -8,8 +8,11 @@
 const gulp = require( 'gulp' );
 const path = require( 'path' );
 const fs = require( 'fs-extra' );
+const gutil = require( 'gulp-util' );
+const rename = require( 'gulp-rename' );
 const collectFiles = require( './tasks/collect-files' );
 const docsBuilder = require( 'docs-builder' );
+const utils = require( '../build/utils' );
 
 module.exports = ( config ) => {
 	const tasks = {
@@ -19,13 +22,13 @@ module.exports = ( config ) => {
 			// Absolute path to "esnext" build of project.
 			const esnextBuildPath = path.join( projectRoot, config.BUILD_DIR, 'esnext' );
 			// Absolute path to documentation sources.
-			const absoluteDocsSourcePath = path.join( projectRoot, config.DOCUMENTATION_SOURCE_DIR );
+			const absoluteDocsSourcePath = path.join( projectRoot, config.DOCUMENTATION.SOURCE_DIR );
 
 			const builderConfig = {
 				name: 'CKEditor5 Documentation',
 				disqusUrl: 'demo-test-pomek',
 				rootDirectory: absoluteDocsSourcePath + path.sep,
-				destinationDirectory: path.join( projectRoot, config.DOCUMENTATION_DIR ),
+				destinationDirectory: path.join( projectRoot, config.DOCUMENTATION.DESTINATION_DIR ),
 				guideFiles: path.join( 'guides', '**', '*.md' ),
 				sampleFiles: path.join( 'samples', '**', '*.md' ),
 				indexFile: path.join( projectRoot, 'docs', 'index.pug' ),
@@ -49,33 +52,54 @@ module.exports = ( config ) => {
 				.then( cb );
 		},
 
-		collectGuideFiles() {
-			return collectFiles( config, 'guides', [ 'md' ] );
-		},
+		collectFiles( sectionConfigKey ) {
+			return collectFiles( config, sectionConfigKey, false )
+				.pipe( utils.noop( ( file ) => {
+					gutil.log( `Processing '${ gutil.colors.cyan( file.path ) }'...` );
+				} ) )
+				.pipe( rename( ( file ) => {
+					const dirFrags = file.dirname.split( path.sep );
+					const packageName = dirFrags[ 0 ].replace( /ckeditor5-/, '' );
 
-		collectSampleFiles() {
-			return collectFiles( config, 'samples', [ 'md', 'html', 'js' ] );
-		},
+					if ( !dirFrags[ 0 ].match( /^ckeditor5-/ ) ) {
+						throw new Error( 'Path should start with directory with prefix "ckeditor5-".' );
+					}
 
-		removeCollectDirectory() {
-			fs.removeSync( config.DOCUMENTATION_SOURCE_DIR );
-		},
+					const newDirFrags = [
+						config.DOCUMENTATION[sectionConfigKey].DIRECTORY,
+						packageName
+					];
 
-		removeCollectedSamples() {
-			fs.removeSync( path.join( config.DOCUMENTATION_SOURCE_DIR, 'samples' ) );
-		},
-
-		removeCollectedGuides() {
-			fs.removeSync( path.join( config.DOCUMENTATION_SOURCE_DIR, 'guides' ) );
+					file.dirname = path.join.apply( null, newDirFrags.concat( dirFrags.slice( 3 ) ) );
+				} ) )
+				.pipe( gulp.dest( config.DOCUMENTATION.SOURCE_DIR ) );
 		},
 
 		register() {
 			gulp.task( 'docs', [ 'docs:collect:guides', 'docs:collect:samples', 'build:js:esnext' ], tasks.buildDocs );
-			gulp.task( 'docs:collect:guides', [ 'docs:clean:guides' ], tasks.collectGuideFiles );
-			gulp.task( 'docs:collect:samples', [ 'docs:clean:samples' ], tasks.collectSampleFiles );
-			gulp.task( 'docs:clean:guides', tasks.removeCollectedGuides );
-			gulp.task( 'docs:clean:samples', tasks.removeCollectedSamples );
-			gulp.task( 'docs:clean', tasks.removeCollectDirectory );
+
+			gulp.task( 'docs:collect:guides', [ 'docs:clean:guides' ], () => {
+				return tasks.collectFiles( 'GUIDES' );
+			} );
+
+			gulp.task( 'docs:collect:samples', [ 'docs:clean:samples' ], () => {
+				return tasks.collectFiles( 'SAMPLES' );
+			} );
+
+			gulp.task( 'docs:clean:guides', ( cb ) => {
+				const guidePath = path.join( config.DOCUMENTATION.SOURCE_DIR, config.DOCUMENTATION.GUIDES.DIRECTORY );
+				fs.remove( guidePath, cb );
+			} );
+
+			gulp.task( 'docs:clean:samples', ( cb ) => {
+				const samplePath = path.join( config.DOCUMENTATION.SOURCE_DIR, config.DOCUMENTATION.SAMPLES.DIRECTORY );
+
+				fs.remove( samplePath, cb );
+			} );
+
+			gulp.task( 'docs:clean', ( cb ) => {
+				fs.remove( config.DOCUMENTATION.SOURCE_DIR, cb );
+			} );
 		}
 	};
 

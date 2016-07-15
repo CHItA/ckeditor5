@@ -495,7 +495,26 @@ describe( 'build-utils', () => {
 
 			rename.write( new Vinyl( {
 				cwd: './',
-				path: path.normalize( 'samples/basic-styles/file.js' ),
+				path: path.normalize( 'ckeditor5-basic-styles/docs/samples/file.js' ),
+				contents: new Buffer( '' )
+			} ) );
+
+			rename.end();
+		} );
+
+		it( 'should move sample files to correct directories with nested path', ( done ) => {
+			const rename = utils.renameSampleFiles();
+
+			rename.pipe(
+				utils.noop( ( data ) => {
+					expect( data.path ).to.equal( path.normalize( 'tests/basic-styles/manual/samples/deep/path/file.js' ) );
+					done();
+				} )
+			);
+
+			rename.write( new Vinyl( {
+				cwd: './',
+				path: path.normalize( 'ckeditor5-basic-styles/docs/samples/deep/path/file.js' ),
 				contents: new Buffer( '' )
 			} ) );
 

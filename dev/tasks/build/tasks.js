@@ -16,6 +16,7 @@ const filter = require( 'gulp-filter' );
 const utils = require( './utils' );
 const runSequence = require( 'run-sequence' );
 const tools = require( '../../utils/tools' );
+const collectFiles = require( '../docs/tasks/collect-files' );
 
 module.exports = ( config ) => {
 	const buildDir = path.join( config.ROOT_DIR, config.BUILD_DIR );
@@ -129,10 +130,7 @@ module.exports = ( config ) => {
 				 * @returns {Stream}
 				 */
 				samples( watch ) {
-					const glob = path.join( config.DOCUMENTATION_SOURCE_DIR, '@(samples)', '**', '*' );
-
-					return gulp.src( glob, { nodir: true } )
-						.pipe( watch ? gulpWatch( glob ) : utils.noop() )
+					return collectFiles( config, 'SAMPLES', watch )
 						.pipe( utils.renameSampleFiles() );
 				}
 			},
@@ -355,7 +353,7 @@ module.exports = ( config ) => {
 
 			gulp.task( 'build:sass', () => tasks.build.sass( args ) );
 			gulp.task( 'build:icons', () => tasks.build.icons( args ) );
-			gulp.task( 'build:js', [ 'build:clean:js', 'docs:collect:samples' ], () => tasks.build.js( args ) );
+			gulp.task( 'build:js', [ 'build:clean:js' ], () => tasks.build.js( args ) );
 
 			// Tasks specific for preparing build with unmodified source files. Uses by `gulp docs` or `gulp bundle`.
 			gulp.task( 'build:clean:js:esnext', () => tasks.clean.js( { formats: [ 'esnext' ] } ) );

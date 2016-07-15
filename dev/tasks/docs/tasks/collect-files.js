@@ -7,45 +7,37 @@
 
 const gulp = require( 'gulp' );
 const gulpWatch = require( 'gulp-watch' );
-const gutil = require( 'gulp-util' );
-const rename = require( 'gulp-rename' );
 const merge = require( 'merge-stream' );
 const path = require( 'path' );
 const utils = require( '../../build/utils' );
 
 /**
- * Collects all documentation files from CKEditor5 modules.
- * These files are just copied to particular directory.
+ * Collects all documentation files from CKEditor5 modules. These files are returned as Stream.
  *
- * @returns {void}
+ * @param {Object} config
+ * @param {string} sectionConfigKey Name of key from `config` which represents section
+ * which should be parsed.
+ * @param {boolean} watch Whether to watch the files.
+ * @returns {Stream}
  */
-module.exports = ( config, sectionName, extensions ) => {
-	const args = utils.parseArguments();
+module.exports = ( config, sectionConfigKey, watch ) => {
+	const extensions = config.DOCUMENTATION[ sectionConfigKey ].EXTENSIONS;
+	const directory = config.DOCUMENTATION[ sectionConfigKey ].DIRECTORY;
+
+	if ( !extensions || !directory ) {
+		throw new Error( `Config contains invalid value of "EXTENSIONS" or "DIRECTORY" value for key "${ sectionConfigKey }".` );
+	}
 
 	const streams = utils.getPackages( config.ROOT_DIR )
 		.map( ( dirPath ) => {
-			const glob = path.join( dirPath, 'docs', sectionName, '**', `*.@(${ extensions.join( '|' )})` );
-
 			// Use parent as a base so we get paths starting with 'ckeditor5-*/docs/*' in the stream.
 			const baseDir = path.parse( dirPath ).dir;
 			const opts = { base: baseDir, nodir: true };
+			const glob = path.join( dirPath, 'docs', directory, '**', `*.@(${ extensions.join( '|' )})` );
 
 			return gulp.src( glob, opts )
-				.pipe( args.watch ? gulpWatch( glob, opts ) : utils.noop() )
-				.pipe( rename( ( file ) => {
-					const dirFrags = file.dirname.split( path.sep );
-					const packageName = dirFrags[ 0 ].replace( /ckeditor5-/, '' );
-
-					file.dirname = path.join( sectionName, packageName );
-				} ) );
+				.pipe( watch ? gulpWatch( glob, opts ) : utils.noop() );
 		} );
 
-	// todo: stream below should be returned from this module
-	// but when it is, --watch option blocks all flow (see line 35)
-
-	merge.apply( null, streams )
-		.pipe( utils.noop( ( file ) => {
-			gutil.log( `Processing '${ gutil.colors.cyan( file.path ) }'...` );
-		} ) )
-		.pipe( gulp.dest( config.DOCUMENTATION_SOURCE_DIR ) );
+	return merge.apply( null, streams );
 };
