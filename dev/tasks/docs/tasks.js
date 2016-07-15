@@ -10,7 +10,6 @@ const path = require( 'path' );
 const fs = require( 'fs-extra' );
 const collectFiles = require( './tasks/collect-files' );
 const docsBuilder = require( 'docs-builder' );
-const runSequence = require( 'run-sequence' );
 
 module.exports = ( config ) => {
 	const tasks = {
@@ -58,24 +57,25 @@ module.exports = ( config ) => {
 			return collectFiles( config, 'samples', [ 'md', 'html', 'js' ] );
 		},
 
-		removeCollectedFiles() {
+		removeCollectDirectory() {
 			fs.removeSync( config.DOCUMENTATION_SOURCE_DIR );
 		},
 
-		register() {
-			gulp.task( 'docs', ( cb ) => {
-				runSequence( 'docs:clean', 'docs:prepare', 'docs:build', cb );
-			} );
+		removeCollectedSamples() {
+			fs.removeSync( path.join( config.DOCUMENTATION_SOURCE_DIR, 'samples' ) );
+		},
 
-			gulp.task( 'docs:build', tasks.buildDocs );
-			gulp.task( 'docs:clean', tasks.removeCollectedFiles );
-			gulp.task( 'docs:collect:guides', tasks.collectGuideFiles );
-			gulp.task( 'docs:collect:samples', tasks.collectSampleFiles );
-			gulp.task( 'docs:prepare', [
-				'docs:collect:guides',
-				'docs:collect:samples',
-				'build:js:esnext'
-			] );
+		removeCollectedGuides() {
+			fs.removeSync( path.join( config.DOCUMENTATION_SOURCE_DIR, 'guides' ) );
+		},
+
+		register() {
+			gulp.task( 'docs', [ 'docs:collect:guides', 'docs:collect:samples', 'build:js:esnext' ], tasks.buildDocs );
+			gulp.task( 'docs:collect:guides', [ 'docs:clean:guides' ], tasks.collectGuideFiles );
+			gulp.task( 'docs:collect:samples', [ 'docs:clean:samples' ], tasks.collectSampleFiles );
+			gulp.task( 'docs:clean:guides', tasks.removeCollectedGuides );
+			gulp.task( 'docs:clean:samples', tasks.removeCollectedSamples );
+			gulp.task( 'docs:clean', tasks.removeCollectDirectory );
 		}
 	};
 

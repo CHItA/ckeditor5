@@ -64,7 +64,12 @@ module.exports = ( config ) => {
 				 * @returns {Stream}
 				 */
 				all( watch ) {
-					return merge( tasks.src.js.main( watch ), tasks.src.js.ckeditor5( watch ), tasks.src.js.packages( watch ) );
+					return merge(
+						tasks.src.js.main( watch ),
+						tasks.src.js.ckeditor5( watch ),
+						tasks.src.js.packages( watch ),
+						tasks.src.js.samples( watch )
+					);
 				},
 
 				/**
@@ -115,6 +120,20 @@ module.exports = ( config ) => {
 
 					return merge.apply( null, streams )
 						.pipe( utils.renamePackageFiles() );
+				},
+
+				/**
+				 * Returns a stream of all samples files from CKEditor 5 dependencies.
+				 *
+				 * @param {Boolean} [watch] Whether to watch the files.
+				 * @returns {Stream}
+				 */
+				samples( watch ) {
+					const glob = path.join( config.DOCUMENTATION_SOURCE_DIR, '@(samples)', '**', '*' );
+
+					return gulp.src( glob, { nodir: true } )
+						.pipe( watch ? gulpWatch( glob ) : utils.noop() )
+						.pipe( utils.renameSampleFiles() );
 				}
 			},
 
@@ -336,7 +355,7 @@ module.exports = ( config ) => {
 
 			gulp.task( 'build:sass', () => tasks.build.sass( args ) );
 			gulp.task( 'build:icons', () => tasks.build.icons( args ) );
-			gulp.task( 'build:js', [ 'build:clean:js' ], () => tasks.build.js( args ) );
+			gulp.task( 'build:js', [ 'build:clean:js', 'docs:collect:samples' ], () => tasks.build.js( args ) );
 
 			// Tasks specific for preparing build with unmodified source files. Uses by `gulp docs` or `gulp bundle`.
 			gulp.task( 'build:clean:js:esnext', () => tasks.clean.js( { formats: [ 'esnext' ] } ) );

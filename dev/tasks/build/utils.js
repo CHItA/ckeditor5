@@ -329,6 +329,32 @@ require( [ 'tests' ], bender.defer(), function( err ) {
 	},
 
 	/**
+	 * Processes paths of sample files inside CKEditor5 dependencies.
+	 *
+	 * * `samples/ui/foo.js` -> `tests/ui/manual/samples/foo.js`
+	 *
+	 * @returns {Stream}
+	 */
+	renameSampleFiles() {
+		return rename( ( file ) => {
+			const dirFrags = file.dirname.split( path.sep );
+			const firstFrag = dirFrags[ 0 ];
+
+			if ( firstFrag == 'samples' ) {
+				// Replace 'samples/' with 'tests/'.
+				// Insert 'manual/samples/' after directory name.
+				// samples/ui/foo.js -> tests/ui/manual/samples/foo.js
+				dirFrags.splice( 0, 1, 'tests' );
+				dirFrags.push( 'manual', 'samples' );
+			} else {
+				throw new Error( 'Path should start with "samples".' );
+			}
+
+			file.dirname = path.join.apply( null, dirFrags );
+		} );
+	},
+
+	/**
 	 * Appends file extension to file URLs. Tries to not touch named modules.
 	 *
 	 * @param {String} source

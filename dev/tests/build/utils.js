@@ -482,6 +482,39 @@ describe( 'build-utils', () => {
 		} );
 	} );
 
+	describe( 'renameSampleFiles', () => {
+		it( 'should move sample files to correct directories', ( done ) => {
+			const rename = utils.renameSampleFiles();
+
+			rename.pipe(
+				utils.noop( ( data ) => {
+					expect( data.path ).to.equal( path.normalize( 'tests/basic-styles/manual/samples/file.js' ) );
+					done();
+				} )
+			);
+
+			rename.write( new Vinyl( {
+				cwd: './',
+				path: path.normalize( 'samples/basic-styles/file.js' ),
+				contents: new Buffer( '' )
+			} ) );
+
+			rename.end();
+		} );
+
+		it( 'should throw error when wrong path provided 1', () => {
+			const rename = utils.renameSampleFiles();
+
+			expect( () => {
+				rename.write( new Vinyl( {
+					cwd: './',
+					path: 'plugin/src/file.js',
+					contents: new Buffer( '' )
+				} ) );
+			} ).to.throw( Error );
+		} );
+	} );
+
 	describe( 'appendModuleExtension', () => {
 		it( 'appends module extension when path provided', () => {
 			const filePath = './path/to/file';
