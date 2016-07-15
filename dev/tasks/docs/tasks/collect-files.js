@@ -5,32 +5,47 @@
 
 'use strict';
 
-const fs = require( 'fs-extra' );
+const gulp = require( 'gulp' );
+const gulpWatch = require( 'gulp-watch' );
+const gutil = require( 'gulp-util' );
+const rename = require( 'gulp-rename' );
+const merge = require( 'merge-stream' );
 const path = require( 'path' );
-const glob = require( 'glob' );
 const utils = require( '../../build/utils' );
-
-const detailsRegexp = /ckeditor5-([A-Z0-9-]+)/i;
 
 /**
  * Collects all documentation files from CKEditor5 modules.
  * These files are just copied to particular directory.
  *
- * All FileSystem functions are running as synchronous.
+ * @returns {void}
  */
 module.exports = ( config, sectionName, extensions ) => {
-	const docPaths = utils.getPackages( config.ROOT_DIR )
-		.map( ( row ) => {
-			return path.join( row, 'docs', sectionName, '**', `*.@(${ extensions.join( '|' )})` );
+	const args = utils.parseArguments();
+
+	const streams = utils.getPackages( config.ROOT_DIR )
+		.map( ( dirPath ) => {
+			const glob = path.join( dirPath, 'docs', sectionName, '**', `*.@(${ extensions.join( '|' )})` );
+
+			// Use parent as a base so we get paths starting with 'ckeditor5-*/docs/*' in the stream.
+			const baseDir = path.parse( dirPath ).dir;
+			const opts = { base: baseDir, nodir: true };
+
+			return gulp.src( glob, opts )
+				.pipe( args.watch ? gulpWatch( glob, opts ) : utils.noop() )
+				.pipe( rename( ( file ) => {
+					const dirFrags = file.dirname.split( path.sep );
+					const packageName = dirFrags[ 0 ].replace( /ckeditor5-/, '' );
+
+					file.dirname = path.join( sectionName, packageName );
+				} ) );
 		} );
 
-	for ( const singlePath of docPaths ) {
-		for ( const sourcePath of glob.sync( singlePath ) ) {
-			const packageName = detailsRegexp.exec( sourcePath )[ 1 ];
-			const fileName = path.basename( sourcePath );
-			const copyNewPath = path.join( config.DOCUMENTATION_SOURCE_DIR, sectionName, packageName, fileName );
+	// todo: stream below should be returned from this module
+	// but when it is, --watch option blocks all flow (see line 35)
 
-			fs.copySync( sourcePath, copyNewPath );
-		}
-	}
+	merge.apply( null, streams )
+		.pipe( utils.noop( ( file ) => {
+			gutil.log( `Processing '${ gutil.colors.cyan( file.path ) }'...` );
+		} ) )
+		.pipe( gulp.dest( config.DOCUMENTATION_SOURCE_DIR ) );
 };
