@@ -10,8 +10,6 @@ module.exports = {
 		 * @param evt
 		 */
 		beforeParse( evt ) {
-			'use strict'; // WAT... JSDoc fails when you move it to the top of the file.
-
 			let className;
 			let foundClassName = /export default class ([A-Za-z]+)/.exec( evt.source );
 

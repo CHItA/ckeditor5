@@ -1,7 +1,5 @@
 /* jshint node: true, esnext: true */
 
-'use strict';
-
 const gulp = require( 'gulp' );
 const jshint = require( 'gulp-jshint' );
 const jscs = require( 'gulp-jscs' );

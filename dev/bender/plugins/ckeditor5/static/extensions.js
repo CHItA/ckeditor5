@@ -6,8 +6,6 @@
 /* jshint node: false, browser: true, globalstrict: true, varstmt: false */
 /* globals bender, requirejs */
 
-'use strict';
-
 ( () => {
 	// This seems to be the only way to force Require.JS to load modules starting with '/' from a different path.
 	var load = requirejs.load;

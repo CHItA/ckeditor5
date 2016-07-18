@@ -19,8 +19,6 @@ const mockery = require( 'mockery' );
 const through = require( 'through2' );
 
 describe( 'lint', () => {
-	'use strict';
-
 	const config = {
 		ROOT_DIR: '.',
 		BUILD_DIR: 'build',

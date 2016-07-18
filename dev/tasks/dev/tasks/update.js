@@ -3,8 +3,6 @@
  * For licensing, see LICENSE.md.
  */
 
-'use strict';
-
 const tools = require( '../../../utils/tools' );
 const ckeditor5Dirs = require( '../../../utils/ckeditor5-dirs' );
 const git = require( '../../../utils/git' );

@@ -3,8 +3,6 @@
  * For licensing, see LICENSE.md.
  */
 
-'use strict';
-
 const ckeditor5Dirs = require( '../../../utils/ckeditor5-dirs' );
 const log = require( '../../../utils/log' );
 

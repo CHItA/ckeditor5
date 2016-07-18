@@ -3,8 +3,6 @@
  * For licensing, see LICENSE.md.
  */
 
-'use strict';
-
 const gutil = require( 'gulp-util' );
 
 let logOut = ( msg ) => gutil.log( msg );

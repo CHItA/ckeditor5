@@ -5,8 +5,6 @@
 
 /* global describe, it */
 
-'use strict';
-
 const sanitize = require( '../../tasks/dev/utils/sanitize' );
 const chai = require( 'chai' );
 const expect = chai.expect;

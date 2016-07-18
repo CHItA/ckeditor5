@@ -5,8 +5,6 @@
 
 /* global describe, it */
 
-'use strict';
-
 const sinon = require( 'sinon' );
 const tools = require( '../../utils/tools' );
 const ckeditor5Dirs = require( '../../utils/ckeditor5-dirs' );

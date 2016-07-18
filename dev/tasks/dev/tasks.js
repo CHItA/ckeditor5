@@ -3,8 +3,6 @@
  * For licensing, see LICENSE.md.
  */
 
-'use strict';
-
 const gulp = require( 'gulp' );
 const minimist = require( 'minimist' );
 const statusTask = require( './tasks/status' );

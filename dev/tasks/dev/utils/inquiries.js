@@ -3,8 +3,6 @@
  * For licensing, see LICENSE.md.
  */
 
-'use strict';
-
 const inquirer = require( 'inquirer' );
 const sanitize = require( './sanitize' );
 const DEFAULT_PLUGIN_NAME_PREFIX = 'ckeditor5-';

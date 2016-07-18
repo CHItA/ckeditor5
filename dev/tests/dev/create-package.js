@@ -5,8 +5,6 @@
 
 /* global describe, it, beforeEach, afterEach */
 
-'use strict';
-
 const chai = require( 'chai' );
 const sinon = require( 'sinon' );
 const expect = chai.expect;

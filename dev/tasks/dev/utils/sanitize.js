@@ -3,8 +3,6 @@
  * For licensing, see LICENSE.md.
  */
 
-'use strict';
-
 module.exports = {
 	appendPeriodIfMissing( text ) {
 		text = text.trim();

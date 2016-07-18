@@ -3,8 +3,6 @@
  * For licensing, see LICENSE.md.
  */
 
-'use strict';
-
 const gutil = require( 'gulp-util' );
 const path = require( 'path' );
 const del = require( 'del' );

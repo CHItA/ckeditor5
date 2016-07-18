@@ -5,8 +5,6 @@
 
 /* global describe, it, beforeEach, afterEach */
 
-'use strict';
-
 const mockery = require( 'mockery' );
 const sinon = require( 'sinon' );
 const chai = require( 'chai' );

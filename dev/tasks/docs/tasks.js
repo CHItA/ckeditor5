@@ -3,8 +3,6 @@
  * For licensing, see LICENSE.md.
  */
 
-'use strict';
-
 const gulp = require( 'gulp' );
 const jsdoc = require( 'gulp-jsdoc3' );
 const path = require( 'path' );

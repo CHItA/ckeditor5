@@ -3,8 +3,6 @@
  * For licensing, see LICENSE.md.
  */
 
-'use strict';
-
 const path = require( 'path' );
 const files = [
 	path.join( __dirname, '../static/extensions.js' )

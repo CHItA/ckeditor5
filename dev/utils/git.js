@@ -3,8 +3,6 @@
  * For licensing, see LICENSE.md.
  */
 
-'use strict';
-
 const tools = require( './tools' );
 const defaultOrigin = 'origin';
 

@@ -3,8 +3,6 @@
  * For licensing, see LICENSE.md.
  */
 
-'use strict';
-
 const git = require( '../../../utils/git' );
 const tools = require( '../../../utils/tools' );
 const path = require( 'path' );

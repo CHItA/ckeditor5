@@ -5,8 +5,6 @@
 
 /* global describe, it, beforeEach, afterEach */
 
-'use strict';
-
 let sandbox;
 const git = require( '../../utils/git' );
 const chai = require( 'chai' );

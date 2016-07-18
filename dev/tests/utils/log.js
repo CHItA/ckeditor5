@@ -5,8 +5,6 @@
 
 /* global describe, it */
 
-'use strict';
-
 const sinon = require( 'sinon' );
 const log = require( '../../utils/log' );
 

@@ -1,4 +1,3 @@
-'use strict';
 
 module.exports = {
 	// Name of CKEditor instance exposed as global variable by a bundle.

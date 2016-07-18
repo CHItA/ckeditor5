@@ -5,8 +5,6 @@
 
 /* global describe, it, sinon */
 
-'use strict';
-
 const tasks = require( '../../tasks/test/tasks' )();
 const buildUtils = require( '../../tasks/build/utils' );
 const devTools = require( '../../utils/tools' );

@@ -5,8 +5,6 @@
 
 /* global describe, it, beforeEach, afterEach */
 
-'use strict';
-
 const chai = require( 'chai' );
 const expect = chai.expect;
 const sinon = require( 'sinon' );
@@ -72,7 +70,6 @@ describe( 'bundle-utils', () => {
 			} );
 
 			const expected = `
-'use strict';
 
 // Babel helpers.
 import '../../node_modules/regenerator-runtime/runtime.js';
@@ -111,7 +108,6 @@ export default class MyCKEditor extends Classic {
 			} );
 
 			const expected = `
-'use strict';
 
 // Babel helpers.
 import '../../node_modules/regenerator-runtime/runtime.js';
@@ -145,7 +141,6 @@ export default class MyCKEditor extends Classic {
 			} );
 
 			const expected = `
-'use strict';
 
 // Babel helpers.
 import '../../node_modules/regenerator-runtime/runtime.js';

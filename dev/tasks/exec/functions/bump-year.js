@@ -3,8 +3,6 @@
  * For licensing, see LICENSE.md.
  */
 
-'use strict';
-
 const gulp = require( 'gulp' );
 const path = require( 'path' );
 const replace = require( 'gulp-replace' );

@@ -1,7 +1,5 @@
 /* jshint node: true, esnext: true */
 
-'use strict';
-
 const gulp = require( 'gulp' );
 const istanbul = require( 'gulp-istanbul' );
 const gutil = require( 'gulp-util' );

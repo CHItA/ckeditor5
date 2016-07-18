@@ -3,8 +3,6 @@
  * For licensing, see LICENSE.md.
  */
 
-'use strict';
-
 const fs = require( 'fs' );
 const filter = require( 'gulp-filter' );
 const parseGitignore = require( 'parse-gitignore' );

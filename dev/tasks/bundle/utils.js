@@ -3,8 +3,6 @@
  * For licensing, see LICENSE.md.
  */
 
-'use strict';
-
 const fs = require( 'fs' );
 const path = require( 'path' );
 const gulp = require( 'gulp' );
@@ -118,7 +116,6 @@ const utils = {
 		}
 
 		return `
-'use strict';
 
 // Babel helpers.
 import '${ path.relative( dir, 'node_modules/regenerator-runtime/runtime.js' ) }';
