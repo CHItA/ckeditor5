@@ -9,10 +9,10 @@ const gulp = require( 'gulp' );
 const path = require( 'path' );
 const fs = require( 'fs-extra' );
 const gutil = require( 'gulp-util' );
-const rename = require( 'gulp-rename' );
-const collectFiles = require( './tasks/collect-files' );
 const docsBuilder = require( 'docs-builder' );
-const utils = require( '../build/utils' );
+const collectFiles = require( './tasks/collect-files' );
+const buildUtils = require( '../build/utils' );
+const docsUtils = require( './utils' );
 
 module.exports = ( config ) => {
 	const tasks = {
@@ -54,24 +54,10 @@ module.exports = ( config ) => {
 
 		collectFiles( sectionConfigKey ) {
 			return collectFiles( config, sectionConfigKey, false )
-				.pipe( utils.noop( ( file ) => {
+				.pipe( buildUtils.noop( ( file ) => {
 					gutil.log( `Processing '${ gutil.colors.cyan( file.path ) }'...` );
 				} ) )
-				.pipe( rename( ( file ) => {
-					const dirFrags = file.dirname.split( path.sep );
-					const packageName = dirFrags[ 0 ].replace( /ckeditor5-/, '' );
-
-					if ( !dirFrags[ 0 ].match( /^ckeditor5-/ ) ) {
-						throw new Error( 'Path should start with directory with prefix "ckeditor5-".' );
-					}
-
-					const newDirFrags = [
-						config.DOCUMENTATION[sectionConfigKey].DIRECTORY,
-						packageName
-					];
-
-					file.dirname = path.join.apply( null, newDirFrags.concat( dirFrags.slice( 3 ) ) );
-				} ) )
+				.pipe( docsUtils.renameDocumentationFiles( config, sectionConfigKey ) )
 				.pipe( gulp.dest( config.DOCUMENTATION.SOURCE_DIR ) );
 		},
 

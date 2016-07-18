@@ -25,7 +25,7 @@ module.exports = ( config, sectionConfigKey, watch ) => {
 	const directory = config.DOCUMENTATION[ sectionConfigKey ].DIRECTORY;
 
 	if ( !extensions || !directory ) {
-		throw new Error( `Config contains invalid value of "EXTENSIONS" or "DIRECTORY" value for key "${ sectionConfigKey }".` );
+		throw new Error( `Config contains invalid value of "EXTENSIONS" or "DIRECTORY" for key "${ sectionConfigKey }".` );
 	}
 
 	const streams = utils.getPackages( config.ROOT_DIR )
